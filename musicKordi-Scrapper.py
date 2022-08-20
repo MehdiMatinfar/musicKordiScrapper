@@ -20,12 +20,9 @@ def findLink(link):
         #    start=match.start(groupNum), end=match.end(groupNum), group=match.group(groupNum)))
         list.append(match.group(groupNum))
     return list
-
 def downloadMusic(musicLink, name):
     response = rq.get(musicLink)
     open(name, "wb").write(response.content)
-    
-    
 def call(url):
     s = HTMLSession()
     response = s.get(url, headers={
@@ -38,8 +35,6 @@ def call(url):
         print(music)
         #  downloadMusic(str(music), music[music.rindex("/") + 1:])
         print(music[music.rindex("/") + 1:],"")
-        
-        
 def link_generator(page_number):
 
     print(f"page : #{page_number}")
@@ -58,5 +53,16 @@ def fetchPages():
     for i in range(1,last_page):
         call(link_generator(i))
 
+def getSingerName():
+    link="https://dl.musickordi.com/Saiwan-Gagli/Saiwan-Gagli_Narin-Narin-Yari-Jwanm[128].mp3"
+    regex = r"(https:\/\/dl\.musickordi.com\/).*(\/)"
 
+    name=""
+    matches = re.finditer(regex, link, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+
+         name=match.group()
+    print(name)
+
+#getSingerName()
 fetchPages()
