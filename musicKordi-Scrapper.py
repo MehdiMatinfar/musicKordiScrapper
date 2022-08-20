@@ -11,7 +11,6 @@ def findLink(link):
     matches = re.finditer(regex, link, re.MULTILINE)
 
     for matchNum, match in enumerate(matches, start=1):
-        
         print("Match {matchNum} was found at {start}-{end}: {match}".format(
             matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
 
@@ -30,6 +29,7 @@ def downloadMusic(musicLink, name):
     file_path = os.path.join(dir_name, name)
     
     if not os.path.isdir(dir_name):
+        
         os.mkdir(dir_name)
         
     response = rq.get(musicLink)
@@ -51,7 +51,6 @@ def call(url):
     for item in audio:
         
         music = item.find('source', first=True).attrs['src']
-        
         print(music)
         
         downloadMusic(str(music), music[music.rindex("/") + 1:])
@@ -59,10 +58,29 @@ def call(url):
 
 
 def link_generator(page_number):
-    
     print(f"page : #{page_number}")
     return base_url + "/page/{}/".format(page_number)
 
+def fetchAllCategories():
+    
+    s = HTMLSession()
+    
+    response = s.get("https://musickordi.com/", headers={
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Safari/537.36'})
+
+    pages = response.html.find('ul.right-panel-ul')
+
+    if len(pages) !=0:
+
+        list = pages[0].find('a')
+
+        for i in list:
+
+            call(link_generator("https://musickordi.com/"+i.attrs['href']))
+
+    else:
+
+        call(base_url)
 
 def fetchPages():
     
@@ -87,25 +105,22 @@ def fetchPages():
 
 
 def getSingerName():
-    
     link = "https://dl.musickordi.com/Saiwan-Gagli/Saiwan-Gagli_Narin-Narin-Yari-Jwanm[128].mp3"
     regex = r"(https:\/\/dl\.musickordi.com\/).*(\/)"
 
     name = ""
-    
     matches = re.finditer(regex, link, re.MULTILINE)
     
     for matchNum, match in enumerate(matches, start=1):
-        
         name = match.group()
         
     print(name)
 
 
 # getSingerName()
-
 base_url = str(input("Page Link: "))
 singer = str(input("Folder Name: "))
 dir_name = "./" + singer + "/"
 
 fetchPages()
+#fetchAllCategories()
