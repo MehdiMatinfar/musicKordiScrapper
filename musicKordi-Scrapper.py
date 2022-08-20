@@ -20,9 +20,12 @@ def findLink(link):
         #    start=match.start(groupNum), end=match.end(groupNum), group=match.group(groupNum)))
         list.append(match.group(groupNum))
     return list
+
 def downloadMusic(musicLink, name):
     response = rq.get(musicLink)
     open(name, "wb").write(response.content)
+    
+    
 def call(url):
     s = HTMLSession()
     response = s.get(url, headers={
@@ -35,6 +38,8 @@ def call(url):
         print(music)
         #  downloadMusic(str(music), music[music.rindex("/") + 1:])
         print(music[music.rindex("/") + 1:],"")
+        
+        
 def link_generator(page_number):
 
     print(f"page : #{page_number}")
